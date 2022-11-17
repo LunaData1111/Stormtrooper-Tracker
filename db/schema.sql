@@ -2,22 +2,22 @@ DROP DATABASE IF EXISTS empires_db;
 CREATE DATABASE empires_db;
 USE empires_db;
 
-CREATE TABLE department(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR NOT NULL 
+CREATE TABLE department (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(30) UNIQUE NOT NULL 
 );
 
-CREATE TABLE role(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR NOT NULL,
-    salary DECIMAL,
-    department_id INT 
+CREATE TABLE role (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(30) UNIQUE NOT NULL,
+    salary INT NOT NULL,
+    department_id INT NOT NULL
 );
 
-CREATE TABLE stormtooper(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR NOT NULL,
-    last_name VARCHAR NOT NULL,
-    role_id INT,
+CREATE TABLE stormtrooper (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
     manager_id INT 
 );
