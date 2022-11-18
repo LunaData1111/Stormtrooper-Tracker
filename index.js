@@ -79,20 +79,53 @@ const viewTroopers = () => {
   });
 };
 const addDepartment = () => {
-    inquirer.prompt([
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "newDepartment",
+        message: "name of your department?",
+      },
+    ])
+    .then((data) => {
+      db.query("insert into department set ?", {
+        name: data.newDepartment,
+      });
+      console.log("department added");
+      initialPrompt();
+    });
+};
+const addRole = () => {
+  db.query("select * from department", (err, res) => {
+    inquirer
+      .prompt([
         {
-            type:"input",
-            name: "newDepartment",
-            message: "name of your department?"
-        }
-    ]) .then(data => {
-        db.query("insert into department set ?", {
-            name: data.newDepartment
-        })
-        console.log("department added")
-        initialPrompt()
-    })
-}
-
+          type: "input",
+          name: "newTitle",
+          message: "What is the role of the new Trooper?",
+        },
+        {
+          type: "input",
+          name: "newSalary",
+          message: "What is the salary for the new Trooper?",
+        },
+        {
+          type: "list",
+          name: "departmentId",
+          message: "What is the departmentid for new Trooper?",
+          choices: res.map((department) => department.id),
+        },
+      ])
+      .then((data) => {
+        db.query("insert into role set ?", {
+          title: data.newTitle,
+          salary: data.newSalary,
+          department_id: data.departmentId,
+        });
+        console.log("new role added.");
+        initialPrompt();
+      });
+  });
+};
 
 initialPrompt();
