@@ -22,7 +22,7 @@ function initialPrompt() {
           "Add a new department",
           "Add a new role",
           "Add a new trooper",
-          "Update trooper roles",
+          "Update stormtrooper roles",
           "Exit",
         ],
       },
@@ -57,6 +57,7 @@ function initialPrompt() {
     });
 }
 
+// showing all Departments.
 const viewDepartments = () => {
   db.query("select * from department", (err, res) => {
     if (err) throw err;
@@ -64,6 +65,8 @@ const viewDepartments = () => {
     initialPrompt();
   });
 };
+
+// the roles of the troopers.
 const viewRoles = () => {
   db.query("select * from role", (err, res) => {
     if (err) throw err;
@@ -71,6 +74,8 @@ const viewRoles = () => {
     initialPrompt();
   });
 };
+
+// view the list of troopers.
 const viewTroopers = () => {
   db.query("select * from stormtrooper", (err, res) => {
     if (err) throw err;
@@ -78,6 +83,8 @@ const viewTroopers = () => {
     initialPrompt();
   });
 };
+
+// add a new department.
 const addDepartment = () => {
   inquirer
     .prompt([
@@ -95,6 +102,8 @@ const addDepartment = () => {
       initialPrompt();
     });
 };
+
+// adding a new role.
 const addRole = () => {
   db.query("select * from department", (err, res) => {
     inquirer
@@ -127,5 +136,85 @@ const addRole = () => {
       });
   });
 };
+
+// addd a new trooper.
+const addTrooper = () => {
+  db.query("select * from stormtrooper", (err, res) => {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "firstName",
+          message: "What is the Stormtrooper's first name?",
+        },
+        {
+          type: "input",
+          name: "lastName",
+          message: "What is the Stormtrooper's last name?",
+        },
+        {
+          type: "list",
+          name: "roles",
+          message: "What is their role id?",
+          choices: res.map((stormtrooper) => stormtrooper.role_id),
+        },
+        {
+          type: "list",
+          name: "manager",
+          message: "What is their Captin last name?",
+          choices: [1, 2],
+        },
+      ])
+      .then((data) => {
+        db.query(
+          "INSERT into stormtrooper SET ?",
+          {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            role_id: data.roles,
+            manager_id: data.manager,
+          },
+          (err) => {
+            if (err) throw err;
+            console.log("new trooper added");
+            initialPrompt();
+          }
+        );
+      });
+  });
+};
+
+// update the stormtrooper.
+const updateTrooper = () => {
+  db.query("select * from stormtrooper", (err, res) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "stormtrooper",
+          message: "Which stormtrooper would you like to update?",
+          choices: res.map((stormtrooper) => stormtrooper.first_name),
+        },
+        {
+          type: "list",
+          name: "roleId",
+          message: "What is their new role?",
+          choices: res.map((stormtrooper) => stormtrooper.role_id),
+        },
+      ])
+
+      .then((data) => {
+        db.query("UPDATE stormtrooper SET role_id = ? where first_name = ?", [
+          data.roleId,
+          data.stormtrooper,
+        ]);
+        initialPrompt();
+      });
+  });
+};
+
+// const exit = () => {
+//   process.exit();
+// };
 
 initialPrompt();
